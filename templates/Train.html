@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Search Trains – SkyBook</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.45);
+      --glass-border: rgba(255, 255, 255, 0.6);
+      --primary-dark: #1e293b;
+      --accent-blue: #0284c7;
+      --text-main: #1e293b;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+    }
+
+    .header-section {
+      background: rgba(30, 41, 59, 0.9);
+      backdrop-filter: blur(10px);
+      color: white;
+      text-align: center;
+      padding: 60px 20px 100px;
+    }
+
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    /* Search Box */
+    .search-container {
+      max-width: 1000px;
+      margin: -60px auto 40px;
+      padding: 30px;
+      border-radius: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      align-items: flex-end;
+    }
+
+    .input-group { display: flex; flex-direction: column; gap: 5px; }
+    .input-group label { font-size: 12px; font-weight: 700; color: #475569; margin-left: 5px; }
+    .search-container input {
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.6);
+      outline: none;
+    }
+
+    .search-btn {
+      background: var(--accent-blue);
+      color: white;
+      border: none;
+      padding: 13px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    /* Train Grid */
+    .train-results {
+      max-width: 1100px;
+      margin: 0 auto 60px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 25px;
+    }
+
+    .train-card {
+      border-radius: 20px;
+      padding: 24px;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .train-card:hover { transform: translateY(-8px); background: rgba(255, 255, 255, 0.6); }
+
+    .train-number { font-size: 12px; color: #64748b; font-weight: 700; }
+    .train-name { font-size: 20px; font-weight: 700; color: var(--accent-blue); margin: 5px 0 15px; }
+
+    .route-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 10px 0;
+      border-top: 1px solid rgba(0,0,0,0.05);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .station-node { text-align: center; }
+    .time { font-weight: 700; font-size: 16px; display: block; }
+    .city { font-size: 13px; color: #64748b; }
+    
+    .duration {
+      font-size: 11px;
+      color: #94a3b8;
+      border: 1px solid #cbd5e1;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .price-tag { font-size: 22px; font-weight: 800; color: var(--primary-dark); }
+    
+    .book-now-btn {
+      margin-top: 20px;
+      background: var(--primary-dark);
+      color: white;
+      text-decoration: none;
+      text-align: center;
+      padding: 12px;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .section-title {
+      text-align: center;
+      margin: 40px 0 20px;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    #noResults { text-align: center; grid-column: 1 / -1; display: none; padding: 40px; }
+  </style>
+</head>
+<body>
+
+  <header class="header-section">
+    <h1>Find Your Train</h1>
+    <p>Connecting cities, people, and stories.</p>
+  </header>
+
+  <div class="search-container glass">
+    <div class="input-group">
+      <label>From</label>
+      <input type="text" id="fromInput" placeholder="e.g. Bangalore">
+    </div>
+    <div class="input-group">
+      <label>To</label>
+      <input type="text" id="toInput" placeholder="e.g. Chennai">
+    </div>
+    <div class="input-group">
+      <label>Date</label>
+      <input type="date">
+    </div>
+    <button class="search-btn" onclick="filterTrains()">Search Trains</button>
+  </div>
+
+  <div id="admin-section" style="display:none;">
+    <h2 class="section-title">New Special Routes</h2>
+    <div class="train-results" id="results-container"></div>
+  </div>
+
+  <h2 class="section-title">Trending Routes</h2>
+<div class="train-results" id="trainGrid">
+  
+  <div class="train-card glass" data-from="Bangalore" data-to="Chennai">
+    <span class="train-number">#12432</span>
+    <div class="train-name">Rajdhani Express</div>
+    <div class="route-info">
+      <div class="station-node">
+        <span class="time">06:00 AM</span>
+        <span class="city">Bangalore</span>
+      </div>
+      <div class="duration">05h 30m</div>
+      <div class="station-node">
+        <span class="time">11:30 AM</span>
+        <span class="city">Chennai</span>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 12px; color: #64748b;">Starting at</span>
+      <span class="price-tag">₹1,200</span>
+    </div>
+    <a href="/trainbook" class="book-now-btn" onclick="bookTrain(this)">Book Seats</a>
+  </div>
+
+  <div class="train-card glass" data-from="Delhi" data-to="Agra">
+    <span class="train-number">#12050</span>
+    <div class="train-name">Gatimaan Express</div>
+    <div class="route-info">
+      <div class="station-node">
+        <span class="time">08:10 AM</span>
+        <span class="city">Delhi</span>
+      </div>
+      <div class="duration">01h 40m</div>
+      <div class="station-node">
+        <span class="time">09:50 AM</span>
+        <span class="city">Agra</span>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 12px; color: #64748b;">Starting at</span>
+      <span class="price-tag">₹750</span>
+    </div>
+    <a href="/trainbook" class="book-now-btn" onclick="bookTrain(this)">Book Seats</a>
+  </div>
+
+  <div class="train-card glass" data-from="Chennai" data-to="Bangalore">
+    <div style="position:absolute; top:15px; right:15px; background:#0ea5e9; color:white; font-size:10px; padding:3px 10px; border-radius:10px; font-weight:700;">PREMIUM</div>
+    <span class="train-number">#20607</span>
+    <div class="train-name">Vande Bharat Express</div>
+    <div class="route-info">
+      <div class="station-node">
+        <span class="time">05:50 AM</span>
+        <span class="city">Chennai</span>
+      </div>
+      <div class="duration">04h 30m</div>
+      <div class="station-node">
+        <span class="time">10:20 AM</span>
+        <span class="city">Bangalore</span>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 12px; color: #64748b;">Starting at</span>
+      <span class="price-tag">₹1,450</span>
+    </div>
+    <a href="/trainbook" class="book-now-btn" onclick="bookTrain(this)">Book Seats</a>
+  </div>
+
+  <div class="train-card glass" data-from="Kolkata" data-to="Chennai">
+    <span class="train-number">#12839</span>
+    <div class="train-name">Howrah Mail</div>
+    <div class="route-info">
+      <div class="station-node">
+        <span class="time">11:50 PM</span>
+        <span class="city">Kolkata</span>
+      </div>
+      <div class="duration">28h 10m</div>
+      <div class="station-node">
+        <span class="time">04:00 AM</span>
+        <span class="city">Chennai</span>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 12px; color: #64748b;">Starting at</span>
+      <span class="price-tag">₹850</span>
+    </div>
+    <a href="/trainbook" class="book-now-btn" onclick="bookTrain(this)">Book Seats</a>
+  </div>
+
+  <div class="train-card glass" data-from="Bangalore" data-to="Goa">
+    <span class="train-number">#16590</span>
+    <div class="train-name">Rani Chennamma</div>
+    <div class="route-info">
+      <div class="station-node">
+        <span class="time">09:15 PM</span>
+        <span class="city">Bangalore</span>
+      </div>
+      <div class="duration">12h 45m</div>
+      <div class="station-node">
+        <span class="time">10:00 AM</span>
+        <span class="city">Goa</span>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 12px; color: #64748b;">Starting at</span>
+      <span class="price-tag">₹600</span>
+    </div>
+    <a href="/trainbook" class="book-now-btn" onclick="bookTrain(this)">Book Seats</a>
+  </div>
+
+  <div class="train-card glass" data-from="Delhi" data-to="Kochi">
+    <span class="train-number">#12626</span>
+    <div class="train-name">Kerala Express</div>
+    <div class="route-info">
+      <div class="station-node">
+        <span class="time">08:10 PM</span>
+        <span class="city">Delhi</span>
+      </div>
+      <div class="duration">46h 30m</div>
+      <div class="station-node">
+        <span class="time">06:40 PM</span>
+        <span class="city">Kochi</span>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 12px; color: #64748b;">Starting at</span>
+      <span class="price-tag">₹1,100</span>
+    </div>
+    <a href="/trainbook" class="book-now-btn" onclick="bookTrain(this)">Book Seats</a>
+  </div>
+
+  <div class="train-card glass" data-from="Delhi" data-to="Agra">
+    <span class="train-number">#12280</span>
+    <div class="train-name">Taj Express</div>
+    <div class="route-info">
+      <div class="station-node">
+        <span class="time">06:45 AM</span>
+        <span class="city">Delhi</span>
+      </div>
+      <div class="duration">03h 05m</div>
+      <div class="station-node">
+        <span class="time">09:50 AM</span>
+        <span class="city">Agra</span>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 12px; color: #64748b;">Starting at</span>
+      <span class="price-tag">₹350</span>
+    </div>
+    <a href="/trainbook" class="book-now-btn" onclick="bookTrain(this)">Book Seats</a>
+  </div>
+
+  <div id="noResults">
+    <h3>No trains found for this route.</h3>
+    <p>Try searching for Bangalore to Chennai or Mumbai to Pune.</p>
+  </div>
+</div>
+
+ <footer>
+    <p>© 2026 SkyBook. All rights reserved. | Professional Travel Management</p>
+  </footer>
+
+  <script>
+    function filterTrains() {
+      const from = document.getElementById('fromInput').value.toLowerCase();
+      const to = document.getElementById('toInput').value.toLowerCase();
+      const cards = document.querySelectorAll('.train-card');
+      let found = false;
+
+      cards.forEach(card => {
+        const cFrom = card.getAttribute('data-from').toLowerCase();
+        const cTo = card.getAttribute('data-to').toLowerCase();
+        if ((from === "" || cFrom.includes(from)) && (to === "" || cTo.includes(to))) {
+          card.style.display = "flex";
+          found = true;
+        } else {
+          card.style.display = "none";
+        }
+      });
+      document.getElementById('noResults').style.display = found ? "none" : "block";
+    }
+
+    function bookTrain(btn) {
+      event.preventDefault(); 
+      const card = btn.closest('.train-card');
+      const rawPrice = card.querySelector('.price-tag').innerText.replace(/[^\d.]/g, '');
+
+      const data = {
+        trainName: card.querySelector('.train-name').innerText,
+        trainNo: card.querySelector('.train-number').innerText,
+        from: card.querySelector('.station-node:first-child .city').innerText,
+        to: card.querySelector('.station-node:last-child .city').innerText,
+        depTime: card.querySelector('.station-node:first-child .time').innerText,
+        arrTime: card.querySelector('.station-node:last-child .time').innerText,
+        duration: card.querySelector('.duration') ? card.querySelector('.duration').innerText : 'Direct',
+        price: rawPrice
+      };
+      
+      const params = new URLSearchParams(data).toString();
+      window.location.href = "/trainbook?" + params;
+    }
+
+    window.onload = function() {
+      const allItems = JSON.parse(localStorage.getItem('skybook_items') || "[]");
+      const container = document.getElementById('results-container'); 
+      const trainItems = allItems.filter(item => item.type === "Train");
+
+      if (trainItems.length > 0) {
+        document.getElementById('admin-section').style.display = "block";
+        trainItems.forEach(item => {
+          const card = document.createElement('div');
+          card.className = "train-card glass";
+          card.setAttribute('data-from', 'Admin'); // Or item.from if you saved it
+          card.setAttribute('data-to', 'Admin');
+          
+          card.innerHTML = `
+            <span class="train-number">#${Math.floor(Math.random()*90000) + 10000}</span>
+            <div class="train-name">${item.name}</div>
+            <div class="route-info">
+              <div class="station-node"><span class="time">TBD</span><span class="city">Source</span></div>
+              <div class="duration">Scheduled</div>
+              <div class="station-node"><span class="time">TBD</span><span class="city">Dest</span></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 12px; color: #64748b;">Starting at</span>
+              <span class="price-tag">₹${item.price}</span>
+            </div>
+            <a href="#" class="book-now-btn">Book Seats</a>
+          `;
+          card.querySelector('.book-now-btn').onclick = () => bookTrain(card.querySelector('.book-now-btn'));
+          container.appendChild(card);
+        });
+      }
+    };
+  </script>
+</body>
+</html>

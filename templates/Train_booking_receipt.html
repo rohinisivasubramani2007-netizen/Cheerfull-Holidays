@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Train Booking Receipt – SkyBook</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --accent-green: #10b981;
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 450px;
+            width: 90%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: #1e293b;
+        }
+
+        .pnr-box {
+            background: #f1f5f9;
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 1px;
+            margin-top: 10px;
+            color: #475569;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .receipt-grid {
+            margin-top: 25px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .row:last-child { border-bottom: none; }
+
+        .row b {
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 0.8px;
+        }
+
+        .row span {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-dark);
+        }
+
+        .total-section {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px dashed #cbd5e1;
+        }
+
+        .total-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .total-amount {
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--accent-green);
+        }
+
+        .print-btn {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: var(--text-dark);
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .print-btn:hover { 
+            background: #000; 
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        @media print {
+            .print-btn, footer { display: none; }
+            body { background: white; }
+            .container { 
+                box-shadow: none; 
+                border: 1px solid #eee;
+                backdrop-filter: none;
+                background: white;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div class="header">
+        <h2>E-Ticket Receipt</h2>
+        <div class="pnr-box">PNR: <span id="pnr">--------</span></div>
+    </div>
+
+    <div class="receipt-grid">
+        <div class="row"><b>Passenger</b><span id="name">---</span></div>
+        <div class="row"><b>Train Name</b><span id="train">---</span></div>
+        <div class="row"><b>Route</b><span><span id="from">---</span> ➔ <span id="to">---</span></span></div>
+        <div class="row"><b>Class</b><span id="class">---</span></div>
+        <div class="row"><b>Count</b><span id="person">---</span></div>
+        <div class="row"><b>Contact</b><span id="phonenumber">---</span></div>
+    </div>
+
+    <div class="total-section">
+        <span class="total-label">Amount Paid</span>
+        <div class="total-amount" id="totalDisplay">₹0</div>
+    </div>
+
+    <button class="print-btn" onclick="window.print()">Print Ticket</button>
+</div>
+
+<footer>
+    © 2026 SkyBook Travel Management. All rights reserved.
+</footer>
+
+<script>
+    window.onload = function() {
+        const params = new URLSearchParams(window.location.search);
+
+        // 1. Generate PNR
+        const randomPNR = "SKYT" + Math.floor(100000 + Math.random() * 900000);
+        document.getElementById("pnr").textContent = randomPNR;
+
+        // 2. Data Mapping (Matches keys from booking page)
+        const name = params.get('passenger') || "Not Provided";
+        const train = params.get('train') || "Express Line";
+        const from = params.get('from') || "Origin";
+        const to = params.get('to') || "Destination";
+        const travelClass = params.get('class') || "Economy";
+        const count = params.get('passengers') || "1";
+        const mobile = params.get('mobile') || "N/A";
+        
+        let total = params.get('total') || "₹0";
+
+        // 3. Injection
+        document.getElementById("name").textContent = name;
+        document.getElementById("train").textContent = train;
+        document.getElementById("from").textContent = from;
+        document.getElementById("to").textContent = to;
+        document.getElementById("class").textContent = travelClass;
+        document.getElementById("person").textContent = count + " Person(s)";
+        document.getElementById("phonenumber").textContent = mobile;
+        document.getElementById("totalDisplay").textContent = total;
+    };
+</script>
+</body>
+</html>

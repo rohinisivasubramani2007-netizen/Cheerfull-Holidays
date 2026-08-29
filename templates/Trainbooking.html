@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm Train Booking | SkyBook</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.45);
+      --glass-border: rgba(255, 255, 255, 0.6);
+      --train-blue: #1e293b;
+      --accent-blue: #0284c7;
+      --text-main: #1e293b;
+      --success-green: #15803d;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .booking-container {
+      background: var(--glass-bg);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 800px;
+      padding: 40px;
+      border-radius: 30px;
+      box-sizing: border-box;
+    }
+
+    .header-info {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .header-info h1 { margin: 0; font-size: 26px; color: var(--train-blue); letter-spacing: -0.5px; }
+
+    .journey-card {
+      background: rgba(255, 255, 255, 0.3);
+      margin-bottom: 25px;
+      padding: 20px;
+      border-radius: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid var(--glass-border);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .full-width { grid-column: span 2; }
+    .form-group { display: flex; flex-direction: column; }
+    
+    label { 
+      font-weight: 700; 
+      font-size: 11px; 
+      margin-bottom: 8px; 
+      color: #475569; 
+      text-transform: uppercase; 
+      letter-spacing: 0.8px; 
+    }
+
+    input, select {
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.5);
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus { 
+      background: white; 
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1);
+    }
+
+    .fare-summary {
+      background: rgba(30, 41, 59, 0.08);
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .total-amount { font-size: 28px; font-weight: 800; color: var(--success-green); }
+
+    button.confirm-btn {
+      width: 100%;
+      padding: 18px;
+      background: var(--train-blue);
+      color: white;
+      border: none;
+      font-size: 17px;
+      font-weight: 700;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+
+    button.confirm-btn:hover { 
+      background: #000; 
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    footer {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 13px;
+      color: #475569;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 600px) { 
+      .form-grid { grid-template-columns: 1fr; } 
+      .full-width { grid-column: span 1; } 
+    }
+  </style>
+</head>
+<body>
+
+  <div class="booking-container">
+    <div class="header-info">
+      <h1>Review Your Booking</h1>
+    </div>
+
+    <div class="journey-card">
+      <div>
+        <div id="displayTrainNo" style="font-size: 11px; font-weight: 800; color: var(--accent-blue);">#00000</div>
+        <div id="displayTrainName" style="font-size: 20px; font-weight: 700;">Loading Train...</div>
+      </div>
+      <div style="text-align: right;">
+        <div style="font-size: 14px; font-weight: 600;">
+          <span id="displayDep">00:00</span> ➔ <span id="displayArr">00:00</span>
+        </div>
+        <div id="displayDuration" style="font-size: 11px; color: #64748b;">0h 0m</div>
+      </div>
+    </div>
+
+    <form id="trainBookingForm">
+      <input type="hidden" id="basePrice" value="0">
+      
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label for="pname">Full Name</label>
+          <input type="text" id="pname" placeholder="As per Govt ID proof" required>
+        </div>
+
+        <div class="form-group">
+          <label for="age">Age</label>
+          <input type="number" id="age" min="1" max="120" required>
+        </div>
+
+        <div class="form-group">
+          <label for="gender">Gender</label>
+          <select id="gender" required>
+            <option value="">Select</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="travelClass">Travel Class</label>
+          <select id="travelClass" onchange="calculateTotal()">
+            <option value="1">Sleeper (SL)</option>
+            <option value="1.8">AC 3-Tier (3A)</option>
+            <option value="2.5">AC 2-Tier (2A)</option>
+            <option value="4">Executive Class (EC)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="passengers">Number of Passengers</label>
+          <input type="number" id="passengers" value="1" min="1" max="6" oninput="calculateTotal()">
+        </div>
+
+        <div class="form-group full-width">
+          <label for="mobile">Mobile Number</label>
+          <input type="tel" id="mobile" placeholder="+91" required pattern="[0-9]{10,12}">
+        </div>
+      </div>
+
+      <div class="fare-summary">
+        <div>
+          <span style="font-weight: 700;">Total Amount</span>
+          <div style="font-size: 10px; color: #64748b;">Inclusive of IRCTC Convenience Fee</div>
+        </div>
+        <div class="total-amount" id="totalDisplay">₹0</div>
+      </div>
+
+      <button type="submit" class="confirm-btn">Proceed to Payment</button>
+    </form>
+  </div>
+
+  <footer>
+    <p>© 2026 SkyBook Global. All rights reserved. | Professional Travel Management</p>
+  </footer>
+  
+  <script>
+    window.onload = function() {
+      const params = new URLSearchParams(window.location.search);
+      
+      if(params.has('trainName')) {
+        document.getElementById('basePrice').value = params.get('price') || 0;
+        document.getElementById('displayTrainName').innerText = params.get('trainName');
+        document.getElementById('displayTrainNo').innerText = "#" + (params.get('trainNo') || "00000");
+        document.getElementById('displayDep').innerText = params.get('depTime') || "00:00";
+        document.getElementById('displayArr').innerText = params.get('arrTime') || "00:00";
+        document.getElementById('displayDuration').innerText = params.get('duration') || "0h 0m";
+        
+        calculateTotal();
+      }
+    };
+
+    function calculateTotal() {
+      const base = parseFloat(document.getElementById('basePrice').value) || 0;
+      const multiplier = parseFloat(document.getElementById('travelClass').value) || 1;
+      const count = parseInt(document.getElementById('passengers').value) || 1;
+
+      const total = Math.round(base * multiplier * count);
+      document.getElementById('totalDisplay').innerText = "₹" + total.toLocaleString('en-IN');
+    }
+
+    document.getElementById('trainBookingForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Get URL params to preserve Origin/Destination if they were passed
+      const urlParams = new URLSearchParams(window.location.search);
+
+      // Construct receipt data mapping to match receipt.html exactly
+      const summary = {
+        passenger: document.getElementById('pname').value,
+        train: document.getElementById('displayTrainName').innerText,
+        from: urlParams.get('from') || "Origin Station", 
+        to: urlParams.get('to') || "Destination Station",
+        class: document.getElementById('travelClass').options[document.getElementById('travelClass').selectedIndex].text,
+        passengers: document.getElementById('passengers').value,
+        mobile: document.getElementById('mobile').value,
+        total: document.getElementById('totalDisplay').innerText
+      };
+
+      saveBookingLocally(summary);
+
+      const finalParams = new URLSearchParams(summary).toString();
+      // Ensure the filename matches your receipt page name
+      window.location.href = "/trainreceipt1?" + finalParams;
+    });
+
+    function saveBookingLocally(data) {
+      const existingBookings = JSON.parse(localStorage.getItem('liveBookings') || "[]");
+      const bookingRecord = {
+          id: "SKYT" + Math.floor(100000 + Math.random() * 900000),
+          customer: data.passenger,
+          type: "Train",
+          destination: data.to,
+          timestamp: new Date().toLocaleTimeString(),
+          status: "Confirmed"
+      };
+      existingBookings.push(bookingRecord);
+      localStorage.setItem('liveBookings', JSON.stringify(existingBookings));
+      localStorage.setItem('lastUpdate', Date.now());
+    }
+  </script>
+</body>
+</html>

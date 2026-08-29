@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkyBook – Booking Receipt</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-dark: #1e293b;
+      --accent-blue: #0284c7;
+      --success-green: #10b981;
+      --glass-bg: rgba(255, 255, 255, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.4);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      color: var(--primary-dark);
+      background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 650px;
+      width: 100%;
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 50px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+    }
+
+    .header-logo { text-align: center; margin-bottom: 30px; }
+    .header-logo h1 { font-size: 28px; font-weight: 800; margin: 0; color: var(--primary-dark); letter-spacing: -1px; }
+
+    .status-badge {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success-green);
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-top: 10px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #64748b;
+      letter-spacing: 1px;
+      margin-bottom: 15px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      padding-bottom: 5px;
+      margin-top: 30px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.03);
+    }
+
+    .row b { font-weight: 500; color: #475569; font-size: 14px; }
+    .row span { font-weight: 600; color: var(--primary-dark); font-size: 14px; }
+
+    .total-wrapper {
+      margin-top: 40px;
+      padding: 25px;
+      background: rgba(30, 41, 59, 0.03);
+      border-radius: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .total-amount { font-size: 24px; font-weight: 800; color: var(--accent-blue); }
+
+    .actions { display: flex; gap: 15px; margin-top: 40px; }
+    .btn { flex: 1; padding: 14px; border-radius: 12px; font-weight: 600; font-size: 14px; cursor: pointer; text-align: center; border: none; text-decoration: none; }
+    .btn-print { background: var(--primary-dark); color: white; }
+    .btn-home { background: white; color: var(--primary-dark); border: 1px solid #e2e8f0; }
+
+    @media print {
+      body { background: white; }
+      .container { box-shadow: none; border: none; }
+      .actions { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-logo">
+    <h1>SkyBook</h1>
+    <div class="status-badge">Payment Confirmed</div>
+  </div>
+
+  <div class="receipt-body">
+    <div class="section-title">Reservation Details</div>
+    <div class="row"><b>Booking ID</b><span id="bookingId"></span></div>
+    <div class="row"><b>Hotel Name</b><span id="hotelName"></span></div>
+    <div class="row"><b>Guest Name</b><span id="guestName"></span></div>
+    
+    <div class="section-title">Stay Information</div>
+    <div class="row"><b>Room Type</b><span id="roomType"></span></div>
+    <div class="row"><b>Check-in</b><span id="checkIn"></span></div>
+    <div class="row"><b>Check-out</b><span id="checkOut"></span></div>
+    <div class="row"><b>Duration</b><span id="nights"></span></div>
+    
+    <div class="section-title">Payment Summary</div>
+    <div class="row"><b>Payment Method</b><span id="payment"></span></div>
+
+    <div class="total-wrapper">
+      <div class="total-label">Grand Total</div>
+      <div class="total-amount" id="totalAmount"></div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <a href="/" class="btn btn-home">Back to Home</a>
+    <button class="btn btn-print" onclick="window.print()">Print PDF Receipt</button>
+  </div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+
+  const fillField = (id, paramKey) => {
+      const val = params.get(paramKey);
+      const element = document.getElementById(id);
+      if (element) {
+          element.textContent = val ? val : "Not Provided";
+      }
+  };
+
+  fillField("bookingId", "bookingId");
+  fillField("hotelName", "hotelName");
+  fillField("guestName", "guestName");
+  fillField("roomType", "roomType");
+  fillField("checkIn", "checkIn");
+  fillField("checkOut", "checkOut");
+  fillField("nights", "nights");
+  fillField("payment", "payment");
+  
+  const total = params.get("total") || "₹0";
+  document.getElementById("totalAmount").textContent = total;
+</script>
+
+</body>
+</html>

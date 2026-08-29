@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Flights – SkyBook</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.45);
+      --glass-border: rgba(255, 255, 255, 0.6);
+      --primary-blue: #0284c7;
+      --text-main: #1e293b;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    .page-header {
+      background: rgba(2, 132, 199, 0.8);
+      backdrop-filter: blur(10px);
+      color: white;
+      text-align: center;
+      padding: 60px 20px 80px;
+    }
+
+    .page-header h1 {
+      margin: 0;
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+
+    .page-header p {
+      font-size: 18px;
+      margin-top: 10px;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    .search-box {
+      padding: 30px;
+      margin: -50px auto 40px;
+      width: 90%;
+      max-width: 1100px;
+      border-radius: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 180px;
+      gap: 5px;
+    }
+
+    .input-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      margin-left: 5px;
+    }
+
+    .search-box input,
+    .search-box select {
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 10px;
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.6);
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .search-box button {
+      padding: 13px 30px;
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .search-box button:hover {
+      background: #0369a1;
+      transform: translateY(-2px);
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 700;
+      margin: 40px 0 30px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 25px;
+      padding: 0 40px 60px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .card {
+      border-radius: 20px;
+      padding: 24px;
+      transition: transform 0.3s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 13px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .airline {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 5px 0 20px;
+      color: var(--primary-blue);
+    }
+
+    .details {
+      display: flex;
+      justify-content: space-between;
+      margin: 8px 0;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      padding-bottom: 4px;
+    }
+
+    .details span:first-child { color: #64748b; }
+    .details span:last-child { font-weight: 600; }
+
+    .card-footer {
+      margin-top: auto;
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .status {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .on-time { background: rgba(34, 197, 94, 0.15); color: #15803d; }
+    .delayed { background: rgba(239, 68, 68, 0.15); color: #b91c1c; }
+
+    .price { font-size: 22px; font-weight: 700; }
+
+    .book-btn {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      padding: 12px;
+      background: var(--primary-blue);
+      color: white;
+      font-weight: 600;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .book-btn:hover { background: #0369a1; }
+
+    footer {
+      background: rgba(15, 23, 42, 0.9);
+      color: white;
+      text-align: center;
+      padding: 30px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-header">
+    <h1>Book Your Flight</h1>
+    <p>Premium travel experiences, frosted for your comfort.</p>
+  </div>
+
+  <div class="search-box glass">
+    <div class="input-group">
+      <label>Departure</label>
+      <input type="text" id="fromInput" placeholder="From (e.g. New Delhi)">
+    </div>
+    <div class="input-group">
+      <label>Destination</label>
+      <input type="text" id="toInput" placeholder="To (e.g. Mumbai)">
+    </div>
+    <div class="input-group">
+      <label>Travel Date</label>
+      <input type="date">
+    </div>
+    <div class="input-group">
+      <label>Class</label>
+      <select>
+        <option>Economy</option>
+        <option>Business</option>
+        <option>First Class</option>
+      </select>
+    </div>
+    <button id="searchBtn">Search Flights</button>
+  </div>
+
+  <div id="noResults" style="display:none; text-align:center; padding: 40px; color: #64748b;">
+    <h3>No flights found for this route.</h3>
+    <p>Please try different locations.</p>
+  </div>
+
+  <div id="admin-section" style="display: none;">
+      <h2 class="section-title">New Special Offers</h2>
+      <div class="cards" id="results-container"></div>
+  </div>
+
+  <h2 class="section-title">Available Flights</h2>
+  
+  <div class="cards">
+    <div class="card glass">
+      <h2>Flight AI-202</h2>
+      <p class="airline">Air India</p>
+      <div class="details"><span>From:</span><span>New Delhi</span></div>
+      <div class="details"><span>To:</span><span>Mumbai</span></div>
+      <div class="details"><span>Departure:</span><span>10:00 AM</span></div>
+      <div class="details"><span>Arrival:</span><span>12:30 PM</span></div>
+      <div class="card-footer">
+        <span class="status on-time">On Time</span>
+        <p class="price">₹4,500</p>
+      </div>
+      <a href="/flightbook" class="book-btn">Book Now</a>
+    </div>
+
+    <div class="card glass">
+      <h2>Flight BA-107</h2>
+      <p class="airline">British Airways</p>
+      <div class="details"><span>From:</span><span>London</span></div>
+      <div class="details"><span>To:</span><span>New York</span></div>
+      <div class="details"><span>Departure:</span><span>02:00 PM</span></div>
+      <div class="details"><span>Arrival:</span><span>05:00 PM</span></div>
+      <div class="card-footer">
+        <span class="status delayed">Delayed</span>
+        <p class="price">$750</p>
+      </div>
+      <a href="/flightbook" class="book-btn">Book Now</a>
+    </div>
+
+    <div class="card glass">
+      <h2>Flight EK-521</h2>
+      <p class="airline">Emirates</p>
+      <div class="details"><span>From:</span><span>Dubai</span></div>
+      <div class="details"><span>To:</span><span>Singapore</span></div>
+      <div class="details"><span>Departure:</span><span>09:15 AM</span></div>
+      <div class="details"><span>Arrival:</span><span>02:45 PM</span></div>
+      <div class="card-footer">
+        <span class="status on-time">On Time</span>
+        <p class="price">$600</p>
+      </div>
+      <a href="/flightbook" class="book-btn">Book Now</a>
+    </div>
+
+    <div class="card glass">
+      <h2>Flight EK-523</h2>
+      <p class="airline">Airline Express</p>
+      <div class="details"><span>From:</span><span>Chennai</span></div>
+      <div class="details"><span>To:</span><span>Malayisa</span></div>
+      <div class="details"><span>Departure:</span><span>09:30 AM</span></div>
+      <div class="details"><span>Arrival:</span><span>08:45 PM</span></div>
+      <div class="card-footer">
+        <span class="status on-time">On Time</span>
+        <p class="price">$800</p>
+      </div>
+      <a href="/flightbook" class="book-btn">Book Now</a>
+    </div>
+
+    <div class="card glass">
+      <h2>Flight QF-12</h2>
+      <p class="airline">Qantas</p>
+      <div class="details"><span>From:</span><span>Sydney</span></div>
+      <div class="details"><span>To:</span><span>Los Angeles</span></div>
+      <div class="details"><span>Departure:</span><span>07:00 PM</span></div>
+      <div class="details"><span>Arrival:</span><span>01:30 PM</span></div>
+      <div class="card-footer">
+        <span class="status delayed">Delayed</span>
+        <p class="price">$1,200</p>
+      </div>
+      <a href="/flightbook" class="book-btn">Book Now</a>
+    </div>
+  </div>
+
+  <div id="flights-container" class="grid-layout">
+  </div>
+
+  <footer>
+    <p>© 2026 SkyBook. All rights reserved. | Professional Travel Management</p>
+  </footer>
+
+  <script>
+    // Handle redirect for all book buttons (including static ones)
+    function handleBooking(card) {
+        const details = {
+          flightNo: card.querySelector("h2").innerText.replace('Flight ', ''),
+          airline: card.querySelector(".airline").innerText,
+          from: card.querySelectorAll(".details span")[1].innerText,
+          to: card.querySelectorAll(".details span")[3].innerText,
+          price: card.querySelector(".price").innerText
+        };
+        const params = new URLSearchParams(details);
+        window.location.href = "/flightbook?" + params.toString();
+    }
+
+    // Static button listeners
+    document.querySelectorAll(".book-btn").forEach(button => {
+      button.addEventListener("click", function (e) {
+        e.preventDefault();
+        handleBooking(this.closest(".card"));
+      });
+    });
+
+    // Search Logic
+    document.getElementById("searchBtn").addEventListener("click", function() {
+      const fromValue = document.getElementById("fromInput").value.toLowerCase().trim();
+      const toValue = document.getElementById("toInput").value.toLowerCase().trim();
+      const allCards = document.querySelectorAll(".cards .card");
+      let foundCount = 0;
+
+      allCards.forEach(card => {
+        const cardFrom = card.querySelectorAll(".details span")[1].innerText.toLowerCase();
+        const cardTo = card.querySelectorAll(".details span")[3].innerText.toLowerCase();
+        const matchesFrom = fromValue === "" || cardFrom.includes(fromValue);
+        const matchesTo = toValue === "" || cardTo.includes(toValue);
+
+        if (matchesFrom && matchesTo) {
+          card.style.display = "flex";
+          foundCount++;
+        } else {
+          card.style.display = "none";
+        }
+      });
+      document.getElementById("noResults").style.display = foundCount === 0 ? "block" : "none";
+    });
+
+    // Admin Data Loading
+    window.onload = function() {
+      const allItems = JSON.parse(localStorage.getItem('skybook_items') || "[]");
+      const container = document.getElementById('results-container'); 
+      const adminSection = document.getElementById('admin-section');
+      
+      const filteredItems = allItems.filter(item => item.type === "Flight");
+
+      if (filteredItems.length > 0) {
+        adminSection.style.display = "block";
+        filteredItems.forEach(item => {
+          const card = document.createElement('div');
+          card.className = "card glass";
+          card.innerHTML = `
+            <h2>Flight ADMIN-${item.id.toString().slice(-3)}</h2>
+            <p class="airline">${item.name}</p>
+            <div class="details"><span>From:</span><span>Global Hub</span></div>
+            <div class="details"><span>To:</span><span>International</span></div>
+            <div class="card-footer">
+              <span class="status on-time">Promo</span>
+              <p class="price">₹${item.price}</p>
+            </div>
+            <a href="#" class="book-btn">Book Now</a>
+          `;
+          
+          card.querySelector('.book-btn').addEventListener('click', (e) => {
+              e.preventDefault();
+              handleBooking(card);
+          });
+          
+          container.appendChild(card);
+        });
+      }
+    };
+
+    function displayFlights() {
+    const container = document.getElementById('flights-container');
+    // 1. Get all data
+    const allItems = JSON.parse(localStorage.getItem('skybook_items') || "[]");
+    
+    // 2. Filter for ONLY Flights
+    const flights = allItems.filter(item => item.type === 'Flight');
+
+    // 3. Map to HTML
+    container.innerHTML = flights.map(f => `
+      <div class="flight-card">
+        <h3>${f.name}</h3>
+        <p>From: ${f.from} To: ${f.to}</p>
+        <div class="price">$${f.price}</div>
+        <button>Book Now</button>
+      </div>
+    `).join('');
+  }
+
+  window.onload = displayFlights;
+  </script>
+</body>
+</html>

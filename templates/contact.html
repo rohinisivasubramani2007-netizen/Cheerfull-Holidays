@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us – SkyBook</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.45);
+      --glass-border: rgba(255, 255, 255, 0.6);
+      --primary-purple: #6366f1; /* Modern indigo/purple */
+      --text-main: #1e293b;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    /* Glass Effect Utility */
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    /* Header */
+    header {
+      background: rgba(99, 102, 241, 0.85); /* Glassy purple */
+      backdrop-filter: blur(10px);
+      color: #fff;
+      text-align: center;
+      padding: 80px 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+
+    header p {
+      margin-top: 10px;
+      font-size: 18px;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+
+    /* Contact Info Section */
+    .contact-info {
+      width: 90%;
+      max-width: 800px;
+      margin: -40px auto 40px;
+      padding: 40px;
+      border-radius: 24px;
+      text-align: center;
+    }
+
+    .contact-info h2 {
+      margin-top: 0;
+      color: var(--primary-purple);
+      font-size: 24px;
+      margin-bottom: 25px;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 15px 0;
+      font-size: 17px;
+      font-weight: 500;
+    }
+
+    .info-item span {
+      font-size: 20px;
+    }
+
+    /* Locations Section */
+    .locations {
+      padding: 40px 20px 80px;
+      text-align: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .locations h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 40px;
+      color: var(--text-main);
+    }
+
+    .location-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 20px;
+    }
+
+    .location {
+      padding: 20px;
+      border-radius: 16px;
+      font-weight: 600;
+      color: #475569;
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+
+    .location:hover {
+      transform: translateY(-5px);
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--primary-purple);
+      border-color: var(--primary-purple);
+    }
+
+    footer {
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(10px);
+      color: white;
+      text-align: center;
+      padding: 30px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Contact Us</h1>
+    <p>We’re here to help you navigate the skies.</p>
+  </header>
+
+  <section class="contact-info glass">
+    <h2>Get in Touch</h2>
+    <div class="info-item"><span>📞</span> +91 86677 59480</div>
+    <div class="info-item"><span>📧</span> support@cheerfullholliday.com</div>
+    <div class="info-item"><span>🏢</span> 138, RG Road, Bangalore, India</div>
+  </section>
+
+  <section class="locations">
+    <h2>Our Global Presence</h2>
+    <div class="location-list">
+      <div class="location glass">Mumbai</div>
+      <div class="location glass">Hyderabad</div>
+      <div class="location glass">Bangalore</div>
+      <div class="location glass">Chennai</div>
+      <div class="location glass">Coimbatore</div>
+      <div class="location glass">Erode</div>
+      <div class="location glass">Madurai</div>
+      <div class="location glass">Trichy</div>
+      <div class="location glass">Salem</div>
+      <div class="location glass">Kochi</div>
+      <div class="location glass">Vellore</div>
+      <div class="location glass">Pondicherry</div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 SkyBook. All rights reserved. | Professional Travel Management</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Booking – SkyBook</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --primary-dark: #0f172a;
+            --accent-green: #10b981;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary-dark);
+        }
+
+        .container {
+            max-width: 550px;
+            width: 90%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 40px;
+            border-radius: 28px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 { text-align: center; font-weight: 800; margin-bottom: 30px; letter-spacing: -1px; }
+
+        .form-group { margin-bottom: 18px; }
+        label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; display: block; margin-bottom: 8px; letter-spacing: 0.5px; }
+
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 12px;
+            outline: none;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        input:focus { border-color: var(--accent-green); }
+        input[readonly] { background: #f1f5f9; color: var(--text-muted); cursor: not-allowed; border: 1px solid #e2e8f0; }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary-dark);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        .btn:hover { background: #000; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+        #totalAmountBox {
+            margin-top: 25px;
+            padding: 20px;
+            background: #ecfdf5;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid #d1fae5;
+        }
+
+        .amount-val { font-size: 24px; font-weight: 900; color: var(--accent-green); display: block; }
+        .nights-val { font-size: 12px; color: #065f46; font-weight: 600; }
+
+        footer { margin-top: 25px; font-size: 12px; color: var(--text-muted); text-align: center; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Confirm Booking</h1>
+
+    <form id="bookingForm">
+        <div class="form-group">
+            <label>Selected Accommodation</label>
+            <input type="text" id="hotel" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Base Price (per night)</label>
+            <input type="text" id="price" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="guestName" placeholder="e.g. John Doe" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label>Check-in</label>
+                <input type="date" id="checkin" required>
+            </div>
+            <div class="form-group">
+                <label>Check-out</label>
+                <input type="date" id="checkout" required>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label>Number of Guests</label>
+                <input type="number" id="guests" min="1" value="1" required>
+            </div>
+            <div class="form-group">
+                <label>Room Category</label>
+                <select id="room" required>
+                    <option value="1">Standard</option>
+                    <option value="1.5">Deluxe (+50%)</option>
+                    <option value="2.5">Suite (+150%)</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="totalAmountBox">
+            <span class="amount-val" id="displayTotal">₹0</span>
+            <span class="nights-val" id="displayNights">Select your dates</span>
+        </div>
+
+        <button type="submit" class="btn">Confirm & Generate Receipt</button>
+    </form>
+</div>
+
+<footer>
+    © 2026 SkyBook Travel Management. All rights reserved.
+</footer>
+
+<script>
+window.onload = function() {
+    const params = new URLSearchParams(window.location.search);
+    
+    if(params.has('hotel')) document.getElementById("hotel").value = params.get('hotel');
+    if(params.has('price')) document.getElementById("price").value = "₹" + params.get('price');
+
+    const today = new Date().toISOString().split('T')[0];
+    const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+    document.getElementById("checkin").setAttribute('min', today);
+    document.getElementById("checkin").value = today;
+    document.getElementById("checkout").value = tomorrow;
+
+    calculateTotal();
+};
+
+function calculateTotal() {
+    const priceText = document.getElementById("price").value;
+    const basePrice = parseFloat(priceText.replace(/[^\d.]/g, '')) || 0;
+    
+    const checkin = new Date(document.getElementById("checkin").value);
+    const checkout = new Date(document.getElementById("checkout").value);
+    const guests = parseInt(document.getElementById("guests").value) || 1;
+    const roomMultiplier = parseFloat(document.getElementById("room").value) || 1;
+
+    const timeDiff = checkout - checkin;
+    const nights = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+    let total = 0;
+
+    if (nights > 0) {
+        total = basePrice * nights * guests * roomMultiplier;
+        document.getElementById("displayTotal").innerText = `₹${total.toLocaleString('en-IN')}`;
+        document.getElementById("displayNights").innerText = `${nights} Night(s) Reservation`;
+    } else {
+        document.getElementById("displayTotal").innerText = "₹0";
+        document.getElementById("displayNights").innerText = "Invalid Date Range";
+    }
+
+    return { total, nights };
+}
+
+["checkin", "checkout", "guests", "room"].forEach(id => {
+    document.getElementById(id).addEventListener("change", calculateTotal);
+});
+
+document.getElementById("bookingForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const { total, nights } = calculateTotal();
+
+    if (nights <= 0) {
+        alert("Check-out date must be at least one day after check-in.");
+        return;
+    }
+
+    const finalData = {
+        bookingId: "SKHB" + Date.now(),
+        hotelName: document.getElementById("hotel").value,
+        guestName: document.getElementById("guestName").value,
+        roomType: document.getElementById("room").options[document.getElementById("room").selectedIndex].text,
+        checkIn: document.getElementById("checkin").value,
+        checkOut: document.getElementById("checkout").value,
+        nights: nights + " Night(s)",
+        payment: "Online Payment (Confirmed)",
+        total: "₹" + total.toLocaleString('en-IN')
+    };
+
+    const params = new URLSearchParams(finalData);
+    // Updated to match your second filename exactly
+    window.location.href = "/hotelreceipt1?" + params.toString(); 
+});
+</script>
+
+</body>
+</html>

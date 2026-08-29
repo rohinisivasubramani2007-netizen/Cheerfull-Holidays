@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkyBook – Luxury Hotel Booking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.45);
+      --glass-border: rgba(255, 255, 255, 0.6);
+      --primary-blue: #0284c7;
+      --text-main: #1e293b;
+      --accent-gold: #b45309;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    /* Header Matching Flight Page */
+    .page-header {
+      background: rgba(2, 132, 199, 0.8);
+      backdrop-filter: blur(10px);
+      color: white;
+      text-align: center;
+      padding: 60px 20px 80px;
+    }
+
+    .page-header h1 {
+      margin: 0;
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+
+    .page-header p {
+      font-size: 18px;
+      margin-top: 10px;
+      opacity: 0.9;
+      font-weight: 300;
+    }
+
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    /* Search Bar Matching Flight Page */
+    .search-box {
+      padding: 30px;
+      margin: -50px auto 40px;
+      width: 90%;
+      max-width: 1100px;
+      border-radius: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 180px;
+      gap: 5px;
+    }
+
+    .input-group label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+      margin-left: 5px;
+    }
+
+    .search-box input, .search-box select {
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      border-radius: 10px;
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.6);
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .search-btn {
+      padding: 13px 30px;
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .search-btn:hover { background: #0369a1; transform: translateY(-2px); }
+
+    /* Section Headers */
+    .section-title {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 700;
+      margin: 40px 0 30px;
+      color: var(--text-main);
+    }
+
+    /* Grid layout matching Flight Page */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 25px;
+      padding: 0 40px 60px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .card {
+      border-radius: 20px;
+      transition: transform 0.3s;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--glass-bg);
+    }
+
+    .card:hover { transform: translateY(-8px); background: rgba(255, 255, 255, 0.6); }
+
+    .card img { width: 100%; height: 200px; object-fit: cover; }
+
+    .card-content { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; }
+
+    .card h2 {
+      margin: 0;
+      font-size: 12px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+    }
+
+    .hotel-name {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 5px 0 20px;
+      color: var(--primary-blue);
+    }
+
+    .details {
+      display: flex;
+      justify-content: space-between;
+      margin: 8px 0;
+      font-size: 14px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      padding-bottom: 4px;
+    }
+
+    .details span:first-child { color: #64748b; }
+    .details span:last-child { font-weight: 600; }
+
+    .card-footer {
+      margin-top: auto;
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(34, 197, 94, 0.15);
+      color: #15803d;
+    }
+
+    .price { font-size: 24px; font-weight: 700; color: var(--text-main); }
+
+    .book-btn {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      padding: 12px;
+      background: var(--primary-blue);
+      color: white;
+      font-weight: 600;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .book-btn:hover { background: #0369a1; }
+
+    footer {
+      background: rgba(15, 23, 42, 0.9);
+      color: white;
+      text-align: center;
+      padding: 40px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-header">
+    <h1>Find Your Sanctuary</h1>
+    <p>Premium travel experiences, frosted for your comfort.</p>
+  </div>
+
+  <div class="search-box glass">
+    <div class="input-group">
+      <label>Destination</label>
+      <input type="text" id="destInput" placeholder="Where to? (e.g. Bali)">
+    </div>
+    <div class="input-group">
+      <label>Check-in</label>
+      <input type="date">
+    </div>
+    <div class="input-group">
+      <label>Check-out</label>
+      <input type="date">
+    </div>
+    <button class="search-btn">Search Stays</button>
+  </div>
+
+  <div id="admin-section" style="display:none;">
+    <h2 class="section-title">Exclusive Admin Picks</h2>
+    <div class="cards" id="results-container"></div>
+  </div>
+
+  <h2 class="section-title">Bali, Indonesia</h2>
+  <div class="cards">
+    <div class="card glass">
+      <img src="{{ url_for('static',filename='bali.h1.jpg')}}" alt="The Stones Hotel">
+      <div class="card-content">
+        <h2>Luxury Resort</h2>
+        <p class="hotel-name">The Stones Hotel</p>
+        <div class="details"><span>Rating:</span><span>★★★★★</span></div>
+        <div class="details"><span>Location:</span><span>Legian</span></div>
+        <div class="card-footer">
+          <span class="status-badge">Available</span>
+          <p class="price">₹8,500</p>
+        </div>
+        <a href="javascript:void(0)" class="book-btn" onclick="goToBooking('The Stones Hotel', '8500')">View Details</a>
+      </div>
+    </div>
+    <div class="card glass">
+      <img src="{{ url_for('static',filename='bali.h2.jpg')}}" alt="The Legian">
+      <div class="card-content">
+        <h2>Boutique Hotel</h2>
+        <p class="hotel-name">The Legian Seminyak</p>
+        <div class="details"><span>Rating:</span><span>★★★★</span></div>
+        <div class="details"><span>Location:</span><span>Seminyak</span></div>
+        <div class="card-footer">
+          <span class="status-badge">Available</span>
+          <p class="price">₹12,000</p>
+        </div>
+        <a href="javascript:void(0)" class="book-btn" onclick="goToBooking('The Legian Seminyak', '12000')">View Details</a>
+      </div>
+    </div>
+    <div class="card glass">
+      <img src="{{ url_for('static',filename='bali.h3.jpg')}}" alt="Maya Ubud">
+      <div class="card-content">
+        <h2>Wellness Retreat</h2>
+        <p class="hotel-name">Maya Ubud Resort</p>
+        <div class="details"><span>Rating:</span><span>★★★★★</span></div>
+        <div class="details"><span>Location:</span><span>Ubud</span></div>
+        <div class="card-footer">
+          <span class="status-badge">Available</span>
+          <p class="price">₹15,500</p>
+        </div>
+        <a href="javascript:void(0)" class="book-btn" onclick="goToBooking('Maya Ubud Resort', '15500')">View Details</a>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Kyoto, Japan</h2>
+  <div class="cards">
+    <div class="card glass">
+      <img src="{{ url_for('static',filename='japan.h1.jpg')}}" alt="Hoshinoya">
+      <div class="card-content">
+        <h2>Ryokan</h2>
+        <p class="hotel-name">Hoshinoya Kyoto</p>
+        <div class="details"><span>Rating:</span><span>★★★★</span></div>
+        <div class="details"><span>Experience:</span><span>Riverside</span></div>
+        <div class="card-footer">
+          <span class="status-badge" style="background: rgba(2, 132, 199, 0.15); color: var(--primary-blue);">Premium</span>
+          <p class="price">¥20,000</p>
+        </div>
+        <a href="javascript:void(0)" class="book-btn" onclick="goToBooking('Hoshinoya Kyoto', '20000')">View Details</a>
+      </div>
+    </div>
+    <div class="card glass">
+      <img src="{{ url_for('static',filename='japan.h2 (2).jpg')}}" alt="Karuizawa">
+      <div class="card-content">
+        <h2>Country House</h2>
+        <p class="hotel-name">Prince Cottage</p>
+        <div class="details"><span>Rating:</span><span>★★★</span></div>
+        <div class="details"><span>Experience:</span><span>Forest</span></div>
+        <div class="card-footer">
+          <span class="status-badge">Available</span>
+          <p class="price">¥15,000</p>
+        </div>
+        <a href="javascript:void(0)" class="book-btn" onclick="goToBooking('Prince Cottage', '15000')">View Details</a>
+      </div>
+    </div>
+    <div class="card glass">
+      <img src="{{ url_for('static',filename='japan.h3.jpg')}}" alt="Amanemu">
+      <div class="card-content">
+        <h2>Ultra Luxury</h2>
+        <p class="hotel-name">Amanemu</p>
+        <div class="details"><span>Rating:</span><span>★★★★★</span></div>
+        <div class="details"><span>Experience:</span><span>Hot Springs</span></div>
+        <div class="card-footer">
+          <span class="status-badge">Available</span>
+          <p class="price">¥30,000</p>
+        </div>
+        <a href="javascript:void(0)" class="book-btn" onclick="goToBooking('Amanemu', '30000')">View Details</a>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title">Incredible India</h2>
+  <div class="cards">
+    <div class="card glass">
+      <img src="{{ url_for('static',filename='india.h1.jpg')}}" alt="India Stay 1">
+      <div class="card-content">
+        <h2>Heritage Hotel</h2>
+        <p class="hotel-name">The Grand Palace</p>
+        <div class="details"><span>Rating:</span><span>★★★★★</span></div>
+        <div class="details"><span>City:</span><span>Jaipur</span></div>
+        <div class="card-footer">
+          <span class="status-badge">Available</span>
+          <p class="price">₹18,000</p>
+        </div>
+        <a href="javascript:void(0)" class="book-btn" onclick="goToBooking('The Grand Palace', '18000')">View Details</a>
+      </div>
+    </div>
+    <div class="card glass">
+      <img src="{{ url_for('static',filename='india.h2.jpg')}}" alt="India Stay 2">
+      <div class="card-content">
+        <h2>Hill Resort</h2>
+        <p class="hotel-name">Himalayan Retreat</p>
+        <div class="details"><span>Rating:</span><span>★★★★</span></div>
+        <div class="details"><span>City:</span><span>Manali</span></div>
+        <div class="card-footer">
+          <span class="status-badge">Available</span>
+          <p class="price">₹7,500</p>
+        </div>
+        <a href="javascript:void(0)" class="book-btn" onclick="goToBooking('Himalayan Retreat', '7500')">View Details</a>
+      </div>
+    </div>
+    <div class="card glass">
+      <img src="{{ url_for('static',filename='india.h3.jpg')}}" alt="India Stay 3">
+      <div class="card-content">
+        <h2>Beach Resort</h2>
+        <p class="hotel-name">Goa Sands Villa</p>
+        <div class="details"><span>Rating:</span><span>★★★★★</span></div>
+        <div class="details"><span>City:</span><span>Goa</span></div>
+        <div class="card-footer">
+          <span class="status-badge">Available</span>
+          <p class="price">₹12,500</p>
+        </div>
+        <a href="javascript:void(0)" class="book-btn" onclick="goToBooking('Goa Sands Villa', '12500')">View Details</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 SkyBook Global. Luxury travel curated for the modern explorer.</p>
+  </footer>
+
+  <script>
+    function goToBooking(hotelName, price) {
+        const cleanPrice = price.toString().replace(/[^\d.]/g, '');
+        window.location.href = `/hotelbook?hotel=${encodeURIComponent(hotelName)}&price=${cleanPrice}`;
+    }
+
+    window.onload = function() {
+      const allItems = JSON.parse(localStorage.getItem('skybook_items') || "[]");
+      const container = document.getElementById('results-container'); 
+      const hotelItems = allItems.filter(item => item.type === "Hotel");
+
+      if (hotelItems.length > 0) {
+        document.getElementById('admin-section').style.display = "block";
+        hotelItems.forEach(item => {
+          const card = document.createElement('div');
+          card.className = "card glass";
+          card.innerHTML = `
+            <img src="${item.image || 'https://via.placeholder.com/400x200'}" alt="${item.name}">
+            <div class="card-content">
+              <h2>Verified Offer</h2>
+              <p class="hotel-name">${item.name}</p>
+              <div class="details"><span>Rating:</span><span>★★★★★</span></div>
+              <div class="card-footer">
+                <span class="status-badge">Limited Deal</span>
+                <p class="price">₹${item.price}</p>
+              </div>
+              <a href="javascript:void(0)" class="book-btn">Book Now</a>
+            </div>
+          `;
+          card.querySelector('.book-btn').onclick = () => goToBooking(item.name, item.price);
+          container.appendChild(card);
+        });
+      }
+    };
+  </script>
+</body>
+</html>
